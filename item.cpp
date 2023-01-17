@@ -9,6 +9,7 @@ Item::Item(QWidget *parent, ItemType type, QString path)
     setLayout(new QGridLayout(this));
     layout()->addWidget(img);
 }
+
 void Item::mouseMoveEvent(QMouseEvent *event)
 {
     if (!(event->buttons() & Qt::LeftButton)) return;
@@ -18,6 +19,7 @@ void Item::mouseMoveEvent(QMouseEvent *event)
     QDrag *drag = new QDrag(this);
     QMimeData *mmd = new QMimeData;
     mmd->setImageData( img->pixmap()->toImage());
+    mmd->setText("1");
     drag->setMimeData(mmd);
     drag->setPixmap(*img->pixmap());
     drag->exec(Qt::CopyAction | Qt::MoveAction);

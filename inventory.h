@@ -3,6 +3,7 @@
 
 #include <QTableWidgetItem>
 #include <QDragEnterEvent>
+#include <QApplication>
 #include <QTableWidget>
 #include <QMouseEvent>
 #include <QHeaderView>
@@ -11,8 +12,7 @@
 #include <QMimeData>
 #include <QPixmap>
 #include <QLabel>
-
-#include <QDebug>
+#include <QDrag>
 
 class Inventory: public QTableWidget {
     Q_OBJECT
@@ -21,9 +21,11 @@ public:
 protected:
     void dragEnterEvent(QDragEnterEvent *);
     void dropEvent(QDropEvent *);
-    void mousePressEvent(QMouseEvent *event);
+    void dragMoveEvent(QDragMoveEvent *);
+    void mousePressEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
 private:
-    int cnt1, cnt2, cnt3, cnt4, cnt5, cnt6, cnt7, cnt8, cnt9;
+    QPoint dragStartPosition;
 };
 
 #endif // INVENTORY_H

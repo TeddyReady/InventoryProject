@@ -25,97 +25,48 @@ Inventory::Inventory(QWidget *parent) : QTableWidget(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //Настройки Drag & Drop
     setDragDropOverwriteMode(true);
-    setDragDropMode(QAbstractItemView::InternalMove);
     setAcceptDrops(true);
+    setDragEnabled(true);
     setDropIndicatorShown(true);
 
-    //Счетчики предметов
-    cnt1 = 0;
-    cnt2 = 0;
-    cnt3 = 0;
-    cnt4 = 0;
-    cnt5 = 0;
-    cnt6 = 0;
-    cnt7 = 0;
-    cnt8 = 0;
-    cnt9 = 0;
+    //Создаем items в таблицу
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            QTableWidgetItem *item = new QTableWidgetItem("");
+            item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
+            item->setFlags(item->flags() ^ (Qt::ItemIsDropEnabled));
+            setItem(i, j, item);
+        }
+    }
 }
 
 void Inventory::dragEnterEvent(QDragEnterEvent *event)
 {
+    if (event->source() != this)
+        setDragDropMode(InternalMove);
     QStringList formats = event->mimeData()->formats();
-    if (formats.contains("application/x-qt-image"))
+    if (formats.contains("application/x-qt-image") && formats.contains("text/plain")){
         event->acceptProposedAction();
+    }
 }
 
 void Inventory::dropEvent(QDropEvent *event)
 {
-    QTableWidgetItem *item = new QTableWidgetItem("");
-    item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
-    item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
-    //В зависимости от координат добавляем предмет
-    //Первая ячейка
-    if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-      && (event->pos().y() <= geometry().topLeft().y() + 200)){
-        cnt1++;
-        item->setText(QString::number(cnt1));
-        setItem(0, 0, item);
-    }
-    //Вторая ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-           && (event->pos().y() <= geometry().topLeft().y() + 200)) {
-        cnt2++;
-        item->setText(QString::number(cnt2));
-        setItem(0, 1, item);
-    }
-    //Третья ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-           && (event->pos().y() <= geometry().topLeft().y() + 200)) {
-        cnt3++;
-        item->setText(QString::number(cnt3));
-        setItem(0, 2, item);
-    }
-    //Четвертая ячейка
-    else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-           && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-        cnt4++;
-        item->setText(QString::number(cnt4));
-        setItem(1, 0, item);
-    }
-    //Пятая ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-           && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-        cnt5++;
-        item->setText(QString::number(cnt5));
-        setItem(1, 1, item);
-    }
-    //Шестая ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-           && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-        cnt6++;
-        item->setText(QString::number(cnt6));
-        setItem(1, 2, item);
-    }
-    //Седьмая ячейка
-    else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-           && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-        cnt7++;
-        item->setText(QString::number(cnt7));
-        setItem(2, 0, item);
-    }
-    //Восьмая ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-           && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-        cnt8++;
-        item->setText(QString::number(cnt8));
-        setItem(2, 1, item);
-    }
-    //Девятая ячейка
-    else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-           && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-        cnt9++;
-        item->setText(QString::number(cnt9));
-        setItem(2, 2, item);
+    QTableWidgetItem *item = itemAt(event->pos());
+    if (dragDropMode() == InternalMove) {
+        if (item != nullptr) {
+            item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
+            if (item->text() == "")
+                item->setText(QString::number(1));
+            else item->setText(QString::number(QString(item->text()).toInt() + 1));
+        }
+    } else {
+        if (item != nullptr) {
+            item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
+            if (item->text() == "")
+                item->setText(QString::number(event->mimeData()->text().toInt()));
+            else item->setText(QString::number(QString(item->text()).toInt() + event->mimeData()->text().toInt()));
+        }
     }
 
     event->acceptProposedAction();
@@ -123,143 +74,41 @@ void Inventory::dropEvent(QDropEvent *event)
 
 void Inventory::mousePressEvent(QMouseEvent *event)
 {
-    QTableWidgetItem *item = new QTableWidgetItem("");
-    item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
     if (event->button() == Qt::RightButton) {
-        //Первая ячейка
-        if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-          && (event->pos().y() <= geometry().topLeft().y() + 200)){
-            if (cnt1 > 1) {
-                cnt1--;
-                item->setText(QString::number(cnt1));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt1 == 1) {
-                cnt1--;
+        QTableWidgetItem *item = itemAt(event->pos());
+        if (item != nullptr) {
+            if (item->text().toInt() > 1)
+                item->setText(QString::number(QString(item->text()).toInt() - 1));
+            else if (item->text().toInt() == 1) {
                 item->setText("");
                 item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
             }
-            setItem(0, 0, item);
         }
-        //Вторая ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-               && (event->pos().y() <= geometry().topLeft().y() + 200)) {
-            if (cnt2 > 1) {
-                cnt2--;
-                item->setText(QString::number(cnt2));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt2 == 1) {
-                cnt2--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(0, 1, item);
-        }
-        //Третья ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-               && (event->pos().y() <= geometry().topLeft().y() + 200)) {
-            if (cnt3 > 1) {
-                cnt3--;
-                item->setText(QString::number(cnt3));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt3 == 1) {
-                cnt3--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(0, 2, item);
-        }
-        //Четвертая ячейка
-        else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-               && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-            if (cnt4 > 1) {
-                cnt4--;
-                item->setText(QString::number(cnt4));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt4 == 1) {
-                cnt4--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(1, 0, item);
-        }
-        //Пятая ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-               && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-            if (cnt5 > 1) {
-                cnt5--;
-                item->setText(QString::number(cnt5));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt5 == 1) {
-                cnt5--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(1, 1, item);
-        }
-        //Шестая ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-               && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
-            if (cnt6 > 1) {
-                cnt6--;
-                item->setText(QString::number(cnt6));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt6 == 1) {
-                cnt6--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(1, 2, item);
-        }
-        //Седьмая ячейка
-        else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
-               && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-            if (cnt7 > 1) {
-                cnt7--;
-                item->setText(QString::number(cnt7));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt7 == 1) {
-                cnt7--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(2, 0, item);
-        }
-        //Восьмая ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
-               && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-            if (cnt8 > 1) {
-                cnt8--;
-                item->setText(QString::number(cnt8));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt8 == 1) {
-                cnt8--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(2, 1, item);
-        }
-        //Девятая ячейка
-        else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
-               && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
-            if (cnt9 > 1) {
-                cnt9--;
-                item->setText(QString::number(cnt9));
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
-            }
-            else if (cnt9 == 1) {
-                cnt9--;
-                item->setText("");
-                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
-            }
-            setItem(2, 2, item);
+
+    } else if (event->buttons() & Qt::LeftButton) {
+        QTableWidgetItem *item = itemAt(event->pos());
+        if (item != nullptr && item->text() != "") {
+            setDragDropMode(DragDrop);
+            QDrag *drag = new QDrag(this);
+            QMimeData *mmd = new QMimeData;
+            mmd->setImageData(QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
+            mmd->setText(item->text());
+            drag->setMimeData(mmd);
+            drag->setPixmap(QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
+            drag->exec(Qt::MoveAction);
+            item->setText("");
+            item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
         }
     }
+}
+
+void Inventory::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+        dragStartPosition = event->pos();
+}
+
+void Inventory::dragMoveEvent(QDragMoveEvent *event)
+{
+    Q_UNUSED(event);
 }
