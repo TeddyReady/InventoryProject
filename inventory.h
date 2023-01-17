@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-class Inventory: public QTableWidget{
+class Inventory: public QTableWidget {
     Q_OBJECT
 public:
     explicit Inventory(QWidget *parent = nullptr);

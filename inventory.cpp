@@ -50,7 +50,8 @@ void Inventory::dragEnterEvent(QDragEnterEvent *event)
 
 void Inventory::dropEvent(QDropEvent *event)
 {
-    QTableWidgetItem *item = new QTableWidgetItem();
+    QTableWidgetItem *item = new QTableWidgetItem("");
+    item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
     item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
     //В зависимости от координат добавляем предмет
     //Первая ячейка
@@ -122,105 +123,143 @@ void Inventory::dropEvent(QDropEvent *event)
 
 void Inventory::mousePressEvent(QMouseEvent *event)
 {
+    QTableWidgetItem *item = new QTableWidgetItem("");
+    item->setTextAlignment(Qt::AlignBottom | Qt::AlignRight);
     if (event->button() == Qt::RightButton) {
         //Первая ячейка
         if ( (event->pos().x() <= geometry().topLeft().x() + 200)
           && (event->pos().y() <= geometry().topLeft().y() + 200)){
             if (cnt1 > 1) {
                 cnt1--;
-                itemAt(0, 0)->setText(QString::number(cnt1));
-            } else if (cnt1 == 1) {
-                cnt1--;
-                delete itemAt(0, 0);
+                item->setText(QString::number(cnt1));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt1 == 1) {
+                cnt1--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(0, 0, item);
         }
         //Вторая ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
                && (event->pos().y() <= geometry().topLeft().y() + 200)) {
             if (cnt2 > 1) {
                 cnt2--;
-                itemAt(0, 1)->setText(QString::number(cnt2));
-            } else if (cnt2 == 1) {
-                cnt2--;
-                delete itemAt(0, 1);
+                item->setText(QString::number(cnt2));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt2 == 1) {
+                cnt2--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(0, 1, item);
         }
         //Третья ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
                && (event->pos().y() <= geometry().topLeft().y() + 200)) {
             if (cnt3 > 1) {
                 cnt3--;
-                itemAt(0, 2)->setText(QString::number(cnt3));
-            } else if (cnt3 == 1) {
-                cnt3--;
-                delete itemAt(0, 2);
+                item->setText(QString::number(cnt3));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt3 == 1) {
+                cnt3--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(0, 2, item);
         }
         //Четвертая ячейка
         else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
                && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
             if (cnt4 > 1) {
                 cnt4--;
-                itemAt(1, 0)->setText(QString::number(cnt4));
-            } else if (cnt4 == 1) {
-                cnt4--;
-                delete itemAt(1, 0);
+                item->setText(QString::number(cnt4));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt4 == 1) {
+                cnt4--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(1, 0, item);
         }
         //Пятая ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
                && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
             if (cnt5 > 1) {
                 cnt5--;
-                itemAt(1, 1)->setText(QString::number(cnt5));
-            } else if (cnt5 == 1) {
-                cnt5--;
-                delete itemAt(1, 1);
+                item->setText(QString::number(cnt5));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt5 == 1) {
+                cnt5--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(1, 1, item);
         }
         //Шестая ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
                && ((event->pos().y() <= geometry().topLeft().y() + 399) && (event->pos().y() > geometry().topLeft().y() + 200))) {
             if (cnt6 > 1) {
                 cnt6--;
-                itemAt(1, 2)->setText(QString::number(cnt6));
-            } else if (cnt6 == 1) {
-                cnt6--;
-                delete itemAt(1, 2);
+                item->setText(QString::number(cnt6));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt6 == 1) {
+                cnt6--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(1, 2, item);
         }
         //Седьмая ячейка
         else if ( (event->pos().x() <= geometry().topLeft().x() + 200)
                && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
             if (cnt7 > 1) {
                 cnt7--;
-                itemAt(2, 0)->setText(QString::number(cnt7));
-            } else if (cnt7 == 1) {
-                cnt7--;
-                delete itemAt(2, 0);
+                item->setText(QString::number(cnt7));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt7 == 1) {
+                cnt7--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(2, 0, item);
         }
         //Восьмая ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 399) && (event->pos().x() > geometry().topLeft().x() + 200))
                && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
             if (cnt8 > 1) {
                 cnt8--;
-                itemAt(2, 1)->setText(QString::number(cnt8));
-            } else if (cnt8 == 1) {
-                cnt8--;
-                delete itemAt(2, 1);
+                item->setText(QString::number(cnt8));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt8 == 1) {
+                cnt8--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(2, 1, item);
         }
         //Девятая ячейка
         else if ( ((event->pos().x() <= geometry().topLeft().x() + 598) && (event->pos().x() > geometry().topLeft().x() + 399))
                && ((event->pos().y() <= geometry().topLeft().y() + 598) && (event->pos().y() > geometry().topLeft().y() + 399))) {
             if (cnt9 > 1) {
                 cnt9--;
-                itemAt(2, 2)->setText(QString::number(cnt9));
-            } else if (cnt9 == 1) {
-                cnt9--;
-                delete itemAt(2, 2);
+                item->setText(QString::number(cnt9));
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
             }
+            else if (cnt9 == 1) {
+                cnt9--;
+                item->setText("");
+                item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+            }
+            setItem(2, 2, item);
         }
     }
 }
