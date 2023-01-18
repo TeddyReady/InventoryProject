@@ -3,7 +3,7 @@
 Item::Item(QWidget *parent, ItemType type, QString path)
     : QWidget(parent), type(type), path(path)
 {
-    img = new QLabel(this);
+    QLabel *img = new QLabel(this);
     img->setPixmap(QPixmap(path).scaled(150, 180));
 
     setLayout(new QGridLayout(this));
@@ -18,11 +18,11 @@ void Item::mouseMoveEvent(QMouseEvent *event)
 
     QDrag *drag = new QDrag(this);
     QMimeData *mmd = new QMimeData;
-    mmd->setImageData( img->pixmap()->toImage());
+    mmd->setImageData(QPixmap(path).scaled(150, 180));
     mmd->setText("1");
     drag->setMimeData(mmd);
-    drag->setPixmap(*img->pixmap());
-    drag->exec(Qt::CopyAction | Qt::MoveAction);
+    drag->setPixmap(QPixmap(path).scaled(150, 180));
+    drag->exec(Qt::MoveAction);
 
 }
 

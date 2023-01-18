@@ -14,6 +14,8 @@
 #include <QLabel>
 #include <QDrag>
 
+#include "database.h"
+
 class Inventory: public QTableWidget {
     Q_OBJECT
 public:

@@ -38,6 +38,8 @@ Inventory::Inventory(QWidget *parent) : QTableWidget(parent)
             setItem(i, j, item);
         }
     }
+
+    DataBase::createConnection();
 }
 
 void Inventory::dragEnterEvent(QDragEnterEvent *event)

@@ -5,12 +5,13 @@
 #include <QGridLayout>
 #include <QMouseEvent>
 #include <QMimeData>
+#include <QComboBox>
 #include <QPixmap>
 #include <QPoint>
 #include <QLabel>
 #include <QDrag>
 
-enum class ItemType {
+enum class ItemType : quint8 {
     Food, Armor, Weapon
 };
 
@@ -24,7 +25,6 @@ protected:
 private:
     ItemType type;
     QString path;
-    QLabel *img;
     QPoint dragStartPosition;
 };
 

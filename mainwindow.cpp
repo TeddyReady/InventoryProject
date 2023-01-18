@@ -23,4 +23,9 @@ void MainWindow::uploadUI()
     inventory = new Inventory(this);
     ui->gridForItem->addWidget(item);
     ui->gridForInventory->addWidget(inventory);
+
+    DataBase::createConnection();
+    DataBase::createConnection()->createTable();
+    DataBase::createConnection()->printTables();
+    delete DataBase::createConnection();
 }
