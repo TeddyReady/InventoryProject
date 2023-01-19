@@ -38,8 +38,6 @@ Inventory::Inventory(QWidget *parent) : QTableWidget(parent)
             setItem(i, j, item);
         }
     }
-
-    DataBase::createConnection();
 }
 
 void Inventory::dragEnterEvent(QDragEnterEvent *event)
@@ -67,9 +65,15 @@ void Inventory::dropEvent(QDropEvent *event)
             item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
             if (item->text() == "")
                 item->setText(QString::number(event->mimeData()->text().toInt()));
-            else item->setText(QString::number(QString(item->text()).toInt() + event->mimeData()->text().toInt()));
+            else item->setText(QString::number(QString(item->text()).toInt() +
+                                               event->mimeData()->text().split(',').first().toInt()));
         }
     }
+
+    saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+             DataBase::createConnection()->getData("Item", "name", "type", event->mimeData()->text().split(',').last().toInt()),
+             DataBase::createConnection()->getData("Item", "path", "type", event->mimeData()->text().split(',').last().toInt()),
+             item->text().toInt());
 
     event->acceptProposedAction();
 }
@@ -79,27 +83,40 @@ void Inventory::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::RightButton) {
         QTableWidgetItem *item = itemAt(event->pos());
         if (item != nullptr) {
-            if (item->text().toInt() > 1)
+            if (item->text().toInt() > 1) {
                 item->setText(QString::number(QString(item->text()).toInt() - 1));
-            else if (item->text().toInt() == 1) {
+
+                saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+                         DataBase::createConnection()->getData("Inventory", "name", "cell", getCellNumber(QPoint(item->row(), item->column()))),
+                         DataBase::createConnection()->getData("Inventory", "path", "cell", getCellNumber(QPoint(item->row(), item->column()))),
+                         item->text().toInt());
+
+
+            } else if (item->text().toInt() == 1) {
                 item->setText("");
                 item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+                saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+                        "None", ":/new/prefix1/img/white.jpg", 0);
             }
         }
-
     } else if (event->buttons() & Qt::LeftButton) {
         QTableWidgetItem *item = itemAt(event->pos());
         if (item != nullptr && item->text() != "") {
             setDragDropMode(DragDrop);
             QDrag *drag = new QDrag(this);
             QMimeData *mmd = new QMimeData;
-            mmd->setImageData(QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
+            mmd->setImageData(QPixmap(DataBase::createConnection()->getData("Inventory", "path", "cell",
+                                                                            getCellNumber(QPoint(item->row(), item->column())))).scaled(150, 180));
             mmd->setText(item->text());
             drag->setMimeData(mmd);
-            drag->setPixmap(QPixmap(":/new/prefix1/img/apple.png").scaled(150, 180));
+            drag->setPixmap(QPixmap(DataBase::createConnection()->getData("Inventory", "path", "cell",
+                                                                          getCellNumber(QPoint(item->row(), item->column())))).scaled(150, 180));
             drag->exec(Qt::MoveAction);
             item->setText("");
             item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+
+            saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+                    "None", ":/new/prefix1/img/white.jpg", 0);
         }
     }
 }
@@ -113,4 +130,18 @@ void Inventory::mouseMoveEvent(QMouseEvent *event)
 void Inventory::dragMoveEvent(QDragMoveEvent *event)
 {
     Q_UNUSED(event);
+}
+
+int Inventory::getCellNumber(QPoint point)
+{
+    return (point.x() * 3 + (point.y() + 1));
+}
+
+void Inventory::saveToDB(int cell, QString name, QString path, int count){
+    QVariantList data;
+    data.append(cell);
+    data.append(name);
+    data.append(path);
+    data.append(count);
+    DataBase::createConnection()->addData("Inventory", data);
 }

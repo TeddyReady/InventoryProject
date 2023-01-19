@@ -3,9 +3,9 @@
 
 #include <QPropertyAnimation>
 #include <QMainWindow>
+#include <QToolBar>
 
 #include "inventory.h"
-#include "database.h"
 #include "item.h"
 
 QT_BEGIN_NAMESPACE
@@ -19,11 +19,14 @@ private:
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+signals:
+    void reloadImage(QString);
+private slots:
+    void on_nameStorage_currentTextChanged(const QString &arg1);
 private:
     Item *item;
     Inventory *inventory;
-    DataBase *db;
+    DataBaseView *invView, *itemView;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

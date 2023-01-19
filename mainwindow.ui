@@ -15,15 +15,12 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_5">
-    <item row="0" column="2">
+    <item row="0" column="1">
      <widget class="QGroupBox" name="gameZone">
       <property name="title">
        <string>GroupBox</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <layout class="QGridLayout" name="gridForInventory"/>
-       </item>
        <item row="0" column="1">
         <spacer name="horizontalSpacer">
          <property name="orientation">
@@ -37,8 +34,31 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="2">
-        <layout class="QGridLayout" name="gridForItem"/>
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridForInventory"/>
+       </item>
+       <item row="0" column="4">
+        <layout class="QGridLayout" name="gridForItem">
+         <item row="0" column="0">
+          <widget class="QComboBox" name="nameStorage">
+           <item>
+            <property name="text">
+             <string>Food</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Armor</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Weapon</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -46,40 +66,16 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="mainWidget">
-   <attribute name="dockWidgetArea">
-    <number>4</number>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="1" column="0">
-      <widget class="QPushButton" name="btnExit">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>200</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Выход</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="btnBegin">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>200</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Новая игра</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
  </widget>
  <resources/>

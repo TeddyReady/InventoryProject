@@ -12,11 +12,19 @@ DataBase::DataBase()
     if (!dataBase.open()) {
         qDebug() << "Cannot open DataBase: " << dataBase.lastError();
     }
+    createTable(TableType::Inventory);
+    createTable(TableType::Item);
 }
 
 DataBase::~DataBase()
 {
-   QSqlDatabase::database().close();
+    QSqlQuery query;
+    if (!query.exec("DROP TABLE Item"))
+        qDebug() << "CANNOT DELETE ITEM TABLE: " << query.lastError().text();
+    if (!query.exec("DROP TABLE Inventory"))
+        qDebug() << "CANNOT DELETE INVENTORY TABLE: " << query.lastError().text();
+
+    QSqlDatabase::database().close();
 }
 
 DataBase* DataBase::createConnection()
@@ -26,18 +34,32 @@ DataBase* DataBase::createConnection()
     return isConnected;
 }
 
-void DataBase::createTable() const
+void DataBase::createTable(TableType type) const
 {
-    QSqlQuery *query = new QSqlQuery(QSqlDatabase::database());
-    QString table = "CREATE TABLE Inventory ("
-                        "number INTEGER PRIMARY KEY NOT NULL, "
-                        "type VARCHAR(15), "
-                        "name VARCHAR(15), "
-                        "count INTEGER "
-                    ");";
-    if (!query->exec(table))
-        qDebug() << "Cannot create a table Inventory";
-    delete query;
+    QSqlQuery query;
+    QString table;
+    switch (type) {
+    case TableType::Inventory :
+        table = "CREATE TABLE Inventory ("
+                "cell INTEGER PRIMARY KEY NOT NULL, "
+                "name VARCHAR(15) NOT NULL, "
+                "path VARCHAR(50) NOT NULL, "
+                "count INTEGER "
+                ");";
+        if (!query.exec(table))
+            qDebug() << "CANNOT CREATE TABLE INVENTORY: " << query.lastError().text();
+        break;
+
+    case TableType::Item :
+        table = "CREATE TABLE Item ("
+                "type INTEGER, "
+                "name VARCHAR(15) PRIMARY KEY NOT NULL, "
+                "path VARCHAR(50) NOT NULL "
+                ");";
+        if (!query.exec(table))
+            qDebug() << "CANNOT CREATE TABLE ITEM: " << query.lastError().text();
+        break;
+    }
 }
 
 void DataBase::printTables() const
@@ -45,4 +67,60 @@ void DataBase::printTables() const
     foreach (QString tableName, QSqlDatabase::database().tables()) {
         qDebug() << tableName << " ";
     }
+}
+
+void DataBase::addData(QString tableName, const QVariantList &data)
+{
+
+    QSqlQuery query;
+    if (tableName == "Inventory") {
+        query.prepare("INSERT INTO Inventory (cell, name, path, count) "
+                      "VALUES (:cell, :name, :path, :count )");
+
+        query.bindValue(":cell",  data[0].toInt());
+        query.bindValue(":name",  data[1].toString());
+        query.bindValue(":path",  data[2].toString());
+        query.bindValue(":count", data[3].toInt());
+
+        if (!query.exec()) {
+            if (query.lastError().text() == "UNIQUE constraint failed: Inventory.cell Unable to fetch row") {
+                query.prepare("UPDATE Inventory SET name =:name, path =:path, count =:count"
+                              " WHERE cell =:cell");
+
+                query.bindValue(":cell",  data[0].toInt());
+                query.bindValue(":name",  data[1].toString());
+                query.bindValue(":path",  data[2].toString());
+                query.bindValue(":count", data[3].toInt());
+
+                if (!query.exec()) {
+                    qDebug() << "Error with UPDATING Inventory: " << query.lastError().text();
+                }
+
+            } else qDebug() << "Error insert into Inventory: " << query.lastError().text();
+
+        }
+    } else {
+        query.prepare("INSERT INTO Item (type, name, path) "
+                      "VALUES (:type, :name, :path )");
+
+        query.bindValue(":type",  data[0].toInt());
+        query.bindValue(":name",  data[1].toString());
+        query.bindValue(":path",  data[2].toString());
+
+        if (!query.exec())
+            qDebug() << "error insert into Item: " << query.lastError().text();
+    }
+}
+
+QString DataBase::getData(QString tableName, QString selected, QString option, int value)
+{
+    QSqlQuery query;
+    query.prepare("SELECT " + selected + " FROM " + tableName + " WHERE " + option + " =:type");
+    query.bindValue(":type", value);
+    if (!query.exec()) {
+        qDebug() << "error select from " + tableName + ": " << query.lastError().text();
+        return "ERROR";
+    } query.next();
+    return query.value(0).toString();
+
 }

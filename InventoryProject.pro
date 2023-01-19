@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     database.cpp \
+    databaseview.cpp \
     inventory.cpp \
     item.cpp \
     main.cpp \
@@ -17,11 +18,13 @@ SOURCES += \
 
 HEADERS += \
     database.h \
+    databaseview.h \
     inventory.h \
     item.h \
     mainwindow.h
 
 FORMS += \
+    databaseview.ui \
     mainwindow.ui
 
 # Default rules for deployment.

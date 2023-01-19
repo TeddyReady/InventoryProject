@@ -2,5 +2,7 @@
     <qresource prefix="/new/prefix1">
         <file>img/apple.png</file>
         <file>img/white.jpg</file>
+        <file>img/armor.png</file>
+        <file>img/weapon.png</file>
     </qresource>
 </RCC>
