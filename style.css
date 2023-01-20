@@ -1,0 +1,19 @@
+QMainWindow {
+    background-image: url(":/new/prefix1/img/main.png") no-repeat center cover;
+    font-size: 16px;
+    color: White;
+    background-size: cover;
+}
+
+QTableWidget, QComboBox, QTableView, QToolBar, QAction {
+    border: 4px solid Tan;
+    border-radius: 3px;
+    background-color: Beige;
+    font-size: 16px;
+    color: SaddleBrown;
+}
+QAction:hover {
+    color: SaddleBrown;
+    background-color: Beige;
+}
+

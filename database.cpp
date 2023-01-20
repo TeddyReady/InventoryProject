@@ -2,7 +2,7 @@
 
 DataBase* DataBase::isConnected = nullptr;
 
-DataBase::DataBase()
+DataBase::DataBase(QObject *parent) : QObject(parent)
 {
     QSqlDatabase dataBase = QSqlDatabase::addDatabase("QSQLITE");
     dataBase.setDatabaseName("GameInventory");
@@ -109,7 +109,7 @@ void DataBase::addData(QString tableName, const QVariantList &data)
 
         if (!query.exec())
             qDebug() << "error insert into Item: " << query.lastError().text();
-    }
+    } emit updateDBView();
 }
 
 QString DataBase::getData(QString tableName, QString selected, QString option, int value)

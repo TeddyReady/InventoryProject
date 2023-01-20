@@ -20,6 +20,8 @@ DataBaseView::DataBaseView(QString tableName, QWidget *parent) :
                    << "Путь" );
     }
     this->createUI();
+
+    connect(DataBase::createConnection(), &DataBase::updateDBView, [&](){ model->select(); });
 }
 
 DataBaseView::~DataBaseView()

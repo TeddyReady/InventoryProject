@@ -10,7 +10,8 @@ enum class TableType: quint8 {
     Inventory, Item
 };
 
-class DataBase {
+class DataBase: public QObject {
+    Q_OBJECT
 public:
     ~DataBase();
     DataBase(const DataBase& oterDB) = delete ;
@@ -21,9 +22,11 @@ public:
     void printTables() const;
     void addData(QString tableName, const QVariantList &data);
     QString getData(QString tableName, QString selected, QString option, int value);
+signals:
+    void updateDBView();
 protected:
     static DataBase* isConnected;
-    explicit DataBase();
+    explicit DataBase(QObject *parent = nullptr);
 };
 
 #endif // DATABASE_H

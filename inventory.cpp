@@ -1,5 +1,4 @@
 #include "inventory.h"
-
 Inventory::Inventory(QWidget *parent) : QTableWidget(parent)
 {
     //Отключаем подсветку выбранных ячеек
@@ -60,20 +59,23 @@ void Inventory::dropEvent(QDropEvent *event)
                 item->setText(QString::number(1));
             else item->setText(QString::number(QString(item->text()).toInt() + 1));
         }
+        saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+                 DataBase::createConnection()->getData("Item", "name", "type", event->mimeData()->text().split(',').last().toInt()),
+                 DataBase::createConnection()->getData("Item", "path", "type", event->mimeData()->text().split(',').last().toInt()),
+                 item->text().toInt());
     } else {
         if (item != nullptr) {
             item->setData(Qt::DecorationRole, QPixmap::fromImage(event->mimeData()->imageData().value<QImage>()));
             if (item->text() == "")
-                item->setText(QString::number(event->mimeData()->text().toInt()));
+                item->setText(QString::number(event->mimeData()->text().split(',').first().toInt()));
             else item->setText(QString::number(QString(item->text()).toInt() +
                                                event->mimeData()->text().split(',').first().toInt()));
         }
+        saveToDB(getCellNumber(QPoint(item->row(), item->column())),
+                 event->mimeData()->text().split(",").at(1),
+                 event->mimeData()->text().split(",").last(),
+                 item->text().toInt());
     }
-
-    saveToDB(getCellNumber(QPoint(item->row(), item->column())),
-             DataBase::createConnection()->getData("Item", "name", "type", event->mimeData()->text().split(',').last().toInt()),
-             DataBase::createConnection()->getData("Item", "path", "type", event->mimeData()->text().split(',').last().toInt()),
-             item->text().toInt());
 
     event->acceptProposedAction();
 }
@@ -93,10 +95,21 @@ void Inventory::mousePressEvent(QMouseEvent *event)
 
 
             } else if (item->text().toInt() == 1) {
+                //Звуковое сопровождение при удалении всего
+                QString path = DataBase::createConnection()->getData("Inventory", "path", "cell",
+                                getCellNumber(QPoint(item->row(), item->column())));
+                if (path.split("/").last() == "apple.png")
+                    QSound::play(":/new/prefix1/sound/apple.wav");
+                else if (path.split("/").last() == "armor.png")
+                    QSound::play(":/new/prefix1/sound/armor.wav");
+                else
+                    QSound::play(":/new/prefix1/sound/sword.wav");
+
                 item->setText("");
                 item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
+
                 saveToDB(getCellNumber(QPoint(item->row(), item->column())),
-                        "None", ":/new/prefix1/img/white.jpg", 0);
+                         "None", ":/new/prefix1/img/white.jpg", 0);
             }
         }
     } else if (event->buttons() & Qt::LeftButton) {
@@ -105,18 +118,20 @@ void Inventory::mousePressEvent(QMouseEvent *event)
             setDragDropMode(DragDrop);
             QDrag *drag = new QDrag(this);
             QMimeData *mmd = new QMimeData;
-            mmd->setImageData(QPixmap(DataBase::createConnection()->getData("Inventory", "path", "cell",
-                                                                            getCellNumber(QPoint(item->row(), item->column())))).scaled(150, 180));
-            mmd->setText(item->text());
+            QString imgPath = DataBase::createConnection()->getData("Inventory", "path", "cell",
+                                                                    getCellNumber(QPoint(item->row(), item->column())));
+            QString name = DataBase::createConnection()->getData("Inventory", "name", "cell",
+                                                                 getCellNumber(QPoint(item->row(), item->column())));
+            mmd->setImageData(QPixmap(imgPath).scaled(150, 180));
+            mmd->setText(item->text() + "," + name + "," + imgPath);
             drag->setMimeData(mmd);
-            drag->setPixmap(QPixmap(DataBase::createConnection()->getData("Inventory", "path", "cell",
-                                                                          getCellNumber(QPoint(item->row(), item->column())))).scaled(150, 180));
+            drag->setPixmap(QPixmap(imgPath).scaled(150, 180));
             drag->exec(Qt::MoveAction);
             item->setText("");
             item->setData(Qt::DecorationRole, QPixmap(":/new/prefix1/img/white.jpg"));
 
             saveToDB(getCellNumber(QPoint(item->row(), item->column())),
-                    "None", ":/new/prefix1/img/white.jpg", 0);
+                     "None", ":/new/prefix1/img/white.jpg", 0);
         }
     }
 }

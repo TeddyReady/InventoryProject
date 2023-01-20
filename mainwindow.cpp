@@ -16,6 +16,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::uploadUI()
 {
+    //Фоновая музыка
+    QSound::play(":/new/prefix1/sound/main.wav");
+
     //Настройки главного окна
     ui->setupUi(this);
     setMaximumSize(850, 900);
@@ -50,7 +53,6 @@ void MainWindow::uploadUI()
             delete ui->gridForInventory->takeAt(0);
             inventory = new Inventory(this);
             ui->gridForInventory->addWidget(inventory);
-
             item->setDisabled(true);
             inventory->setDisabled(true);
             ui->nameStorage->setDisabled(true);

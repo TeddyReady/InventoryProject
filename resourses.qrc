@@ -4,5 +4,12 @@
         <file>img/white.jpg</file>
         <file>img/armor.png</file>
         <file>img/weapon.png</file>
+        <file>sound/apple.wav</file>
+        <file>sound/armor.wav</file>
+        <file>sound/sword.wav</file>
+        <file>sound/main.wav</file>
+        <file>style.css</file>
+        <file>img/main.png</file>
+        <file>img/tabW.png</file>
     </qresource>
 </RCC>

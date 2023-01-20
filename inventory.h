@@ -3,16 +3,20 @@
 
 #include <QTableWidgetItem>
 #include <QDragEnterEvent>
+#include <QMediaPlaylist>
 #include <QApplication>
 #include <QTableWidget>
+#include <QMediaPlayer>
 #include <QMouseEvent>
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QDropEvent>
 #include <QMimeData>
 #include <QPixmap>
+#include <QSound>
 #include <QLabel>
 #include <QDrag>
+#include <QUrl>
 
 #include "databaseview.h"
 
@@ -28,6 +32,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
 private:
     QPoint dragStartPosition;
+    QMediaPlayer *m_player;
+    QMediaPlaylist *m_playlist;
+
     int getCellNumber(QPoint point);
     void saveToDB(int cell, QString name, QString path, int count);
 };
