@@ -21,10 +21,13 @@ enum class ItemType : quint8 {
 class Item : public QWidget {
     Q_OBJECT
 public:
-    explicit Item(QWidget *parent = nullptr, ItemType type = ItemType::Food, QString = ":/new/prefix1/img/white.jpg");
+    explicit Item(QWidget *parent = nullptr, ItemType type = ItemType::Food,
+                  QString = ":/new/prefix1/img/white.jpg");
 public slots:
+    //Слот для изменения изоображения
     void changeImage(QString);
 protected:
+    //События для Drag
     void mouseMoveEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
 private:

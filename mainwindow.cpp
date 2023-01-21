@@ -41,7 +41,7 @@ void MainWindow::uploadUI()
     ui->gridForItem->addWidget(item);
     ui->gridForInventory->addWidget(inventory);
 
-    //Связываем сигналы со слотами
+    //Обработка кнопки "Новая игра"
     connect(ui->toolBar->actions().at(0), &QAction::triggered, [&](){
         if (ui->toolBar->actions().at(0)->text() == "Новая Игра") {
             item->setEnabled(true);
@@ -61,19 +61,27 @@ void MainWindow::uploadUI()
             ui->toolBar->actions().at(5)->setEnabled(true);
         }
     });
+
+    //Обработка кнопки "БД инвентаря"
     connect(ui->toolBar->actions().at(2), &QAction::triggered, [&](){
         DataBaseView *widget = new DataBaseView("Inventory");
         widget->setWindowTitle("База Данных Инвентаря");
         widget->resize(800, 600);
         widget->show();
     });
+
+    //Обработка кнопки "БД предмета"
     connect(ui->toolBar->actions().at(3), &QAction::triggered, [&](){
         DataBaseView *widget = new DataBaseView("Item");
         widget->setWindowTitle("База Данных Предмета");
         widget->resize(800, 600);
         widget->show();
     });
+
+    //Обработка кнопки "Выйти из приложения"
     connect(ui->toolBar->actions().at(5), &QAction::triggered, [&](){ qApp->exit(); });
+
+    //Обработка обновления предмета
     connect(this, SIGNAL(reloadImage(QString)), item, SLOT(changeImage(QString)));
 }
 

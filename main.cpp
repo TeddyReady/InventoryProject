@@ -4,6 +4,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    //Загрузка таблицы стилей QSS
     QFile file;
     file.setFileName(":/new/prefix1/style.css");
     if (!file.open(QFile::ReadOnly))

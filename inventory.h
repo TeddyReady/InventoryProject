@@ -25,6 +25,7 @@ class Inventory: public QTableWidget {
 public:
     explicit Inventory(QWidget *parent = nullptr);
 protected:
+    //Необходимые для Drag & Drop события
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
@@ -35,7 +36,10 @@ private:
     QMediaPlayer *m_player;
     QMediaPlaylist *m_playlist;
 
+    //Получить номер ячейки по координатам
     int getCellNumber(QPoint point);
+
+    //Сохранение в БД
     void saveToDB(int cell, QString name, QString path, int count);
 };
 

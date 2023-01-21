@@ -10,6 +10,7 @@ Item::Item(QWidget *parent, ItemType type, QString path)
     setLayout(new QGridLayout(this));
     layout()->addWidget(img);
 
+    //Заполняем БД
     for (int i = 0; i < 3; ++i) {
         QVariantList data;
         switch (i) {
@@ -34,6 +35,7 @@ Item::Item(QWidget *parent, ItemType type, QString path)
 
 void Item::changeImage(QString path)
 {
+    //Меняем путь и имя
     this->path = path;
     img->setPixmap(QPixmap(path).scaled(150, 180));
     if (path == ":/new/prefix1/img/apple.png")
@@ -49,6 +51,7 @@ void Item::mouseMoveEvent(QMouseEvent *event)
     if ((event->pos() - dragStartPosition).manhattanLength() < QApplication::startDragDistance())
         return;
 
+    //Настройки Drag
     QDrag *drag = new QDrag(this);
     QMimeData *mmd = new QMimeData;
     mmd->setImageData(QPixmap(path).scaled(150, 180));

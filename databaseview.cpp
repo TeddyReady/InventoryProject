@@ -7,6 +7,7 @@ DataBaseView::DataBaseView(QString tableName, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //В зависимости от данных создаем модели
     if (tableName == "Inventory") {
         setupModel(tableName,
                    QStringList() << "Ячейка"
@@ -21,6 +22,7 @@ DataBaseView::DataBaseView(QString tableName, QWidget *parent) :
     }
     this->createUI();
 
+    //Связываем сигнал обновление с лямбдой
     connect(DataBase::createConnection(), &DataBase::updateDBView, [&](){ model->select(); });
 }
 
@@ -41,6 +43,7 @@ void DataBaseView::setupModel(const QString &tableName, const QStringList &heade
 
 void DataBaseView::createUI()
 {
+    //Настраиваем таблицу
     ui->table->setModel(model);
     ui->table->setSelectionMode(QAbstractItemView::NoSelection);
     ui->table->resizeColumnsToContents();

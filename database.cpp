@@ -4,6 +4,7 @@ DataBase* DataBase::isConnected = nullptr;
 
 DataBase::DataBase(QObject *parent) : QObject(parent)
 {
+    //Создание БД и настройка
     QSqlDatabase dataBase = QSqlDatabase::addDatabase("QSQLITE");
     dataBase.setDatabaseName("GameInventory");
     dataBase.setUserName("Terry");
@@ -12,18 +13,21 @@ DataBase::DataBase(QObject *parent) : QObject(parent)
     if (!dataBase.open()) {
         qDebug() << "Cannot open DataBase: " << dataBase.lastError();
     }
+    //Создаем таблицы
     createTable(TableType::Inventory);
     createTable(TableType::Item);
 }
 
 DataBase::~DataBase()
 {
+    //Удаляем таблицы при завершении работы приложения
     QSqlQuery query;
     if (!query.exec("DROP TABLE Item"))
         qDebug() << "CANNOT DELETE ITEM TABLE: " << query.lastError().text();
     if (!query.exec("DROP TABLE Inventory"))
         qDebug() << "CANNOT DELETE INVENTORY TABLE: " << query.lastError().text();
 
+    //Закрываем соединение с БД
     QSqlDatabase::database().close();
 }
 
@@ -36,6 +40,7 @@ DataBase* DataBase::createConnection()
 
 void DataBase::createTable(TableType type) const
 {
+    //Посредством запросов создаем нужные таблицы
     QSqlQuery query;
     QString table;
     switch (type) {
@@ -71,7 +76,6 @@ void DataBase::printTables() const
 
 void DataBase::addData(QString tableName, const QVariantList &data)
 {
-
     QSqlQuery query;
     if (tableName == "Inventory") {
         query.prepare("INSERT INTO Inventory (cell, name, path, count) "

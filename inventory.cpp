@@ -41,6 +41,7 @@ Inventory::Inventory(QWidget *parent) : QTableWidget(parent)
 
 void Inventory::dragEnterEvent(QDragEnterEvent *event)
 {
+    //В зависимости от рода события устанавливаем режим
     if (event->source() != this)
         setDragDropMode(InternalMove);
     QStringList formats = event->mimeData()->formats();
@@ -51,6 +52,8 @@ void Inventory::dragEnterEvent(QDragEnterEvent *event)
 
 void Inventory::dropEvent(QDropEvent *event)
 {
+    /* В зависимости от режима перемещения
+     * по разному его обрабатываем, после сохраняем в БД */
     QTableWidgetItem *item = itemAt(event->pos());
     if (dragDropMode() == InternalMove) {
         if (item != nullptr) {
@@ -82,6 +85,8 @@ void Inventory::dropEvent(QDropEvent *event)
 
 void Inventory::mousePressEvent(QMouseEvent *event)
 {
+    /* В зависимости от клика по ячейке
+     * по разному его обрабатываем, после сохраняем в БД */
     if (event->button() == Qt::RightButton) {
         QTableWidgetItem *item = itemAt(event->pos());
         if (item != nullptr) {
@@ -115,6 +120,7 @@ void Inventory::mousePressEvent(QMouseEvent *event)
     } else if (event->buttons() & Qt::LeftButton) {
         QTableWidgetItem *item = itemAt(event->pos());
         if (item != nullptr && item->text() != "") {
+            //Настраиваем Drag
             setDragDropMode(DragDrop);
             QDrag *drag = new QDrag(this);
             QMimeData *mmd = new QMimeData;
@@ -144,6 +150,8 @@ void Inventory::mouseMoveEvent(QMouseEvent *event)
 
 void Inventory::dragMoveEvent(QDragMoveEvent *event)
 {
+    /* Данное событие просто должно быть
+     * для поддержки перемещения         */
     Q_UNUSED(event);
 }
 
