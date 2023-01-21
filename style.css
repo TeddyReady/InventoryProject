@@ -1,19 +1,28 @@
 QMainWindow {
-    background-image: url(":/new/prefix1/img/main.png") no-repeat center cover;
+    border-image: url(":/new/prefix1/img/main.png") no-repeat center;
     font-size: 16px;
     color: White;
-    background-size: cover;
 }
 
-QTableWidget, QComboBox, QTableView, QToolBar, QAction {
+QTableWidget, QComboBox, QTableView, QToolBar {
     border: 4px solid Tan;
     border-radius: 3px;
     background-color: Beige;
     font-size: 16px;
     color: SaddleBrown;
 }
-QAction:hover {
-    color: SaddleBrown;
+QToolButton {
+    border: 4px solid Tan;
+    border-radius: 3px;
     background-color: Beige;
+    font-size: 16px;
+    color: SaddleBrown;
 }
-
+QToolButton:hover {
+    background-color: SaddleBrown;
+    color: Beige;
+}
+QGroupBox {
+    font-size: 16px;
+    color: CornSilk;
+}
